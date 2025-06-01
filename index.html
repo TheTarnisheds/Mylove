@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Lời Yêu Thương & Hiệu Ứng Ngôi Sao 3D</title>
+  <style>
+    /* Cài đặt cơ bản: nền đen, ẩn thanh cuộn, bật perspective cho hiệu ứng 3D */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+
+    /* Container chứa tất cả các phần tử (dòng chữ yêu thương, ảnh) có hỗ trợ 3D */
+    #container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
+
+    /* Container nền chứa các ngôi sao */
+    #stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    /* Mỗi star: 1 điểm nhỏ có hiệu ứng lấp lánh */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgb(0, 183, 255);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* Animation rơi: chỉ di chuyển theo phương Y, không xoay */
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 1;
+      }
+    }
+
+    /* Các dòng chữ yêu thương */
+    .falling-text {
+      position: absolute;
+      white-space: nowrap;
+      color: rgb(234, 21, 170);
+      font-family: sans-serif;
+      font-size: 20px;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    /* Các hình ảnh rơi */
+    .falling-image {
+      position: absolute;
+      width: 150px;
+    }
+
+    /* Ẩn các điều khiển của audio (có thể thêm controls nếu cần) */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- File nhạc nền -->
+  <audio id="bg-music" src="music.mp3" autoplay loop></audio>
+
+  <!-- Nền ngôi sao -->
+  <div id="stars"></div>
+
+  <!-- Container chứa các thành phần rơi -->
+  <div id="container"></div>
+
+  <script>
+    /************************
+     * Tạo hiệu ứng "ngôi sao lấp lánh"
+     ************************/
+    const starsContainer = document.getElementById('stars');
+    const totalStars = 200; // Số lượng ngôi sao muốn hiển thị
+
+    function createStars() {
+      starsContainer.innerHTML = "";
+      for (let i = 0; i < totalStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        // Vị trí ngẫu nhiên trong khung nhìn
+        star.style.left = Math.random() * window.innerWidth + "px";
+        star.style.top = Math.random() * window.innerHeight + "px";
+        // Thời gian animation từ 2s đến 5s
+        star.style.animationDuration = (2 + Math.random() * 3) + "s";
+        starsContainer.appendChild(star);
+      }
+    }
+    createStars();
+    window.addEventListener('resize', createStars);
+
+    /************************
+     * Tạo các dòng chữ yêu thương (12 câu)
+     ************************/
+    const loveMessages = [
+      "Em là nguồn sống của anh.",
+      "Mỗi khoảnh khắc bên em trở nên tuyệt vời.",
+      "Anh yêu nụ cười của em.",
+      "Em là ngôi sao sáng trong bầu trời của anh.",
+      "Tình yêu của anh dành cho em là vô hạn.",
+      "Mỗi giây phút bên em đều quý giá.",
+      "Anh nguyện yêu em mãi mãi.",
+      "Em là giấc mơ tuyệt đẹp của anh.",
+      "Tình yêu của chúng ta là huyền thoại.",
+      "Anh yêu từng phút giây bên em.",
+      "Em là nguồn cảm hứng bất tận của anh.",
+      "Tình yêu anh dành cho em luôn bền vững."
+    ];
+
+    function createFallingText(message) {
+      const textElem = document.createElement('div');
+      textElem.classList.add('falling-text');
+      textElem.textContent = message;
+      // Đặt vị trí ngang ngẫu nhiên (đảm bảo không bị tràn quá ngoài khung hình)
+      textElem.style.left = Math.random() * (window.innerWidth - 200) + "px";
+      // Chọn thời gian animation (8-15 giây) và độ trễ (0-5 giây) ngẫu nhiên
+      const duration = 8 + Math.random() * 7;
+      const delay = Math.random() * 5;
+      textElem.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+      document.getElementById('container').appendChild(textElem);
+    }
+    loveMessages.forEach(msg => createFallingText(msg));
+
+    /************************
+     * Tạo các hình ảnh rơi (5 bức ảnh)
+     ************************/
+    const imageFiles = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"];
+
+    function createFallingImage(src) {
+      const imgElem = document.createElement('img');
+      imgElem.classList.add('falling-image');
+      imgElem.src = src;
+      // Vị trí ngang ngẫu nhiên
+      imgElem.style.left = Math.random() * (window.innerWidth - 150) + "px";
+      // Chọn thời gian animation (8-18 giây) và độ trễ (0-5 giây) ngẫu nhiên
+      const duration = 8 + Math.random() * 10;
+      const delay = Math.random() * 5;
+      imgElem.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+      document.getElementById('container').appendChild(imgElem);
+    }
+    imageFiles.forEach(src => createFallingImage(src));
+
+    /************************
+     * Hiệu ứng 3D: Điều chỉnh hướng nhìn theo chuyển động của chuột
+     ************************/
+    const container = document.getElementById('container');
+    document.addEventListener('mousemove', (e) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      // Tính góc xoay tối đa xung quanh 15° dựa trên vị trí chuột
+      const rotateY = (deltaX / centerX) * 15;
+      const rotateX = (-deltaY / centerY) * 15;
+      container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+  </script>
+</body>
+</html>
